@@ -4,7 +4,7 @@
     "description": "PWA locked to portrait, no zoom, no scroll.",
     "start_url": ".",
     "display": "standalone",
-    "orientation": "portrait-primary",
+    "orientation": "portrait",
     "background_color": "#121212",
     "theme_color": "#007aff",
     "icons": [
