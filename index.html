@@ -198,26 +198,26 @@
         }
 
         // Dark Mode Toggle Logic (applies to #app-main-content)
-        // const applyTheme = () => {
-        //     const savedTheme = localStorage.getItem('theme');
-        //     if (savedTheme === 'dark' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        //         mainAppContent.classList.add('dark-mode');
-        //     } else {
-        //         mainAppContent.classList.remove('dark-mode');
-        //     }
-        // };
+        const applyTheme = () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                mainAppContent.classList.add('dark-mode');
+            } else {
+                mainAppContent.classList.remove('dark-mode');
+            }
+        };
 
-        // themeToggleButton.addEventListener('click', () => {
-        //     mainAppContent.classList.toggle('dark-mode');
-        //     localStorage.setItem('theme', mainAppContent.classList.contains('dark-mode') ? 'dark' : 'light');
-        // });
+        themeToggleButton.addEventListener('click', () => {
+            mainAppContent.classList.toggle('dark-mode');
+            localStorage.setItem('theme', mainAppContent.classList.contains('dark-mode') ? 'dark' : 'light');
+        });
 
-        // window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-        //     // Only change if no theme is manually set in localStorage
-        //     if (!localStorage.getItem('theme')) {
-        //         applyTheme();
-        //     }
-        // });
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+            // Only change if no theme is manually set in localStorage
+            if (!localStorage.getItem('theme')) {
+                applyTheme();
+            }
+        });
 
         // Service Worker Registration
         if ('serviceWorker' in navigator) {
