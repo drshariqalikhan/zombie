@@ -2,19 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- CRITICAL: Viewport meta tag for responsiveness and disabling zoom -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
-    <title>Locked PWA</title>
+    <title>Locked PWA Fullscreen</title>
 
-    <!-- CRITICAL: iOS PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="MyPWA"> <!-- This is the title shown when adding to home screen -->
+    <meta name="apple-mobile-web-app-title" content="MyPWA FS">
 
-    <!-- Link to Manifest File - Ensure this path is correct! -->
+    <!-- CORRECTED Link to Manifest File -->
     <link rel="manifest" href="manifest.json">
 
-    <!-- Apple Touch Icon (ensure icon-192x192.png exists in the same directory) -->
     <link rel="apple-touch-icon" href="./icons/icon-192x192.png">
 
     <style>
@@ -23,12 +20,12 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-touch-callout: none; /* Disable callouts (e.g., on long press) */
-            -webkit-user-select: none;   /* Disable text selection in Safari */
-            -khtml-user-select: none;  /* Konqueror HTML */
-            -moz-user-select: none;    /* Old Firefox */
-            -ms-user-select: none;     /* Internet Explorer/Edge */
-            user-select: none;         /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
         :root {
@@ -42,9 +39,9 @@
         html, body {
             width: 100%;
             height: 100%;
-            overflow: hidden; /* Prevent scrolling */
-            overscroll-behavior: none; /* Prevent bounce effect */
-            position: fixed; /* Another way to enforce no scroll and full viewport */
+            overflow: hidden;
+            overscroll-behavior: none;
+            position: fixed;
         }
 
         body {
@@ -59,7 +56,6 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            /* Adjust padding for safe areas (notches, dynamic island) */
             padding-top: env(safe-area-inset-top);
             padding-left: env(safe-area-inset-left);
             padding-right: env(safe-area-inset-right);
@@ -71,12 +67,15 @@
             color: var(--text-color-dark);
         }
 
-        .container {
+        app-content {
+            display: block;
+            width: 90%;
+            max-width: 600px;
             padding: 20px;
         }
 
         h1 {
-            font-size: 1.8em; /* Slightly smaller for fixed screens */
+            font-size: 1.8em;
             margin-bottom: 15px;
             color: var(--accent-color);
         }
@@ -102,27 +101,27 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>PWA Status</h1>
-        <p>Portrait, No Zoom, No Scroll.</p>
+    <app-content>
+        <h1>PWA Fullscreen Test</h1>
+        <p>Locked Portrait, No Zoom, No Scroll.</p>
         <button id="theme-toggle-button">Toggle Dark Mode</button>
-    </div>
+    </app-content>
 
     <script>
         // Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js') // Ensure sw.js is in the root
+                navigator.serviceWorker.register('./sw-workbox.js')
                     .then(registration => {
-                        console.log('ServiceWorker: Registration successful scope: ', registration.scope);
+                        console.log('Workbox ServiceWorker: Registration successful with scope: ', registration.scope);
                     })
                     .catch(error => {
-                        console.error('ServiceWorker: Registration failed: ', error);
+                        console.error('Workbox ServiceWorker: Registration failed: ', error);
                     });
             });
         }
 
-        // Dark Mode Toggle Logic (same as before)
+        // Dark Mode Toggle Logic
         const themeToggleButton = document.getElementById('theme-toggle-button');
         const applyTheme = () => {
             const savedTheme = localStorage.getItem('theme');
@@ -132,36 +131,12 @@
                 document.body.classList.remove('dark-mode');
             }
         };
-
         themeToggleButton.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
             localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
         });
-
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
-        applyTheme(); // Apply theme on initial load
-
-        // Attempt to lock orientation (best effort, manifest is primary)
-        // This is less critical for iOS if manifest `orientation` is set
-        function attemptLockOrientation() {
-            if (screen.orientation && screen.orientation.lock) {
-                screen.orientation.lock('portrait-primary').catch(err => {
-                    // console.warn("Could not lock orientation via JS: ", err);
-                    // Common: "The page needs to be fullscreen in order to call screen.orientation.lock()."
-                    // This is expected if not launched as standalone PWA yet.
-                });
-            }
-        }
-        window.addEventListener('load', attemptLockOrientation);
-
-        // Prevent default touch behaviors that might cause scrolling or zooming
-        // document.addEventListener('touchmove', function(event) {
-        //     event.preventDefault();
-        // }, { passive: false });
-
-        // Disabling touchmove like this can be too aggressive, disabling buttons too.
-        // The viewport meta tag and CSS overflow:hidden should be the primary means.
-        // If you still see scrolling, it means content is overflowing the `body` or `html` elements.
+        applyTheme();
     </script>
 </body>
 </html>
