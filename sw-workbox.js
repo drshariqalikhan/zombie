@@ -7,7 +7,7 @@ if (workbox) {
 
     workbox.core.setCacheNameDetails({
         prefix: 'my-locked-pwa',
-        suffix: 'v4-final-names', // Incremented suffix for this update
+        suffix: 'v5-splash', // Incremented suffix for this splash screen update
         precache: 'precache',
         runtime: 'runtime-cache'
     });
@@ -15,7 +15,6 @@ if (workbox) {
     workbox.precaching.precacheAndRoute([
         { url: './', revision: null },
         { url: './index.html', revision: null },
-        // CORRECTED Manifest Filename for Pre-caching
         { url: './manifest.json', revision: null },
         { url: './icons/icon-192x192.png', revision: null },
         { url: './icons/icon-512x512.png', revision: null }
@@ -30,7 +29,7 @@ if (workbox) {
         }
     });
 
-    console.log('Workbox service worker configured and running with correct manifest.json and icon paths.');
+    console.log('Workbox service worker configured for splash screen version.');
 
 } else {
     console.error(`Workbox didn't load 😬`);
