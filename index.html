@@ -2,19 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- UPDATED Viewport Meta Tag: disables scaling -->
+    <!-- CRITICAL: Viewport meta tag for responsiveness and disabling zoom -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
-    <title>Barebones PWA (Locked)</title>
+    <title>Locked PWA</title>
 
-    <!-- PWA Meta Tags for iOS -->
+    <!-- CRITICAL: iOS PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="MyPWA">
+    <meta name="apple-mobile-web-app-title" content="MyPWA"> <!-- This is the title shown when adding to home screen -->
 
-    <!-- Link to Manifest File -->
+    <!-- Link to Manifest File - Ensure this path is correct! -->
     <link rel="manifest" href="manifest.json">
 
-    <!-- Apple Touch Icon (replace with your icon) -->
+    <!-- Apple Touch Icon (ensure icon-192x192.png exists in the same directory) -->
     <link rel="apple-touch-icon" href="icon-192x192.png">
 
     <style>
@@ -23,89 +23,88 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-touch-callout: none; /* Disable callouts (e.g., on long press) */
+            -webkit-user-select: none;   /* Disable text selection in Safari */
+            -khtml-user-select: none;  /* Konqueror HTML */
+            -moz-user-select: none;    /* Old Firefox */
+            -ms-user-select: none;     /* Internet Explorer/Edge */
+            user-select: none;         /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
         }
 
         :root {
-            --background-color-light: #ffffff;
+            --background-color-light: #f0f0f0;
             --text-color-light: #333333;
             --background-color-dark: #121212;
             --text-color-dark: #e0e0e0;
-            --accent-color: #007aff; /* iOS Blue */
+            --accent-color: #007aff;
         }
 
-        /* UPDATED: Prevent scrolling and ensure full height */
         html, body {
-            overflow: hidden; /* Prevents scrolling */
-            height: 100%;     /* Ensures body takes full viewport height */
-            overscroll-behavior: none; /* Prevents pull-to-refresh and scroll chaining */
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Prevent scrolling */
+            overscroll-behavior: none; /* Prevent bounce effect */
+            position: fixed; /* Another way to enforce no scroll and full viewport */
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
                 Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
             line-height: 1.6;
-            padding: 20px;
             background-color: var(--background-color-light);
             color: var(--text-color-light);
             transition: background-color 0.3s ease, color 0.3s ease;
-            display: flex; /* Added for centering content vertically if needed */
-            flex-direction: column; /* Added for centering content */
-            align-items: center; /* Added for centering content */
-            justify-content: center; /* Added for centering content */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            /* Adjust padding for safe areas (notches, dynamic island) */
+            padding-top: env(safe-area-inset-top);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
-        /* Dark Mode Styles */
         body.dark-mode {
             background-color: var(--background-color-dark);
             color: var(--text-color-dark);
         }
 
         .container {
-            max-width: 600px;
-            width: 90%; /* Ensure container doesn't cause overflow on small screens */
-            margin: 0 auto;
-            text-align: center;
+            padding: 20px;
         }
 
         h1 {
-            font-size: 2em;
-            margin-bottom: 20px;
+            font-size: 1.8em; /* Slightly smaller for fixed screens */
+            margin-bottom: 15px;
             color: var(--accent-color);
         }
 
         p {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         button {
-            padding: 10px 20px;
+            padding: 12px 25px;
             font-size: 1em;
             cursor: pointer;
             background-color: var(--accent-color);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             transition: background-color 0.3s ease;
         }
 
         button:hover {
             opacity: 0.8;
         }
-
-        /* Style for content to not be obscured by status bar when black-translucent is used */
-        /* and viewport-fit=cover is set */
-        body {
-            padding-top: env(safe-area-inset-top);
-            padding-left: env(safe-area-inset-left);
-            padding-right: env(safe-area-inset-right);
-            padding-bottom: env(safe-area-inset-bottom);
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Welcome to Your PWA!</h1>
-        <p>This PWA is locked to portrait, non-scrollable, and non-zoomable.</p>
+        <h1>PWA Status</h1>
+        <p>Portrait, No Zoom, No Scroll.</p>
         <button id="theme-toggle-button">Toggle Dark Mode</button>
     </div>
 
@@ -113,84 +112,56 @@
         // Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
+                navigator.serviceWorker.register('./sw.js') // Ensure sw.js is in the root
                     .then(registration => {
-                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                        console.log('ServiceWorker: Registration successful scope: ', registration.scope);
                     })
                     .catch(error => {
-                        console.log('ServiceWorker registration failed: ', error);
+                        console.error('ServiceWorker: Registration failed: ', error);
                     });
             });
         }
 
-        // Attempt to lock screen orientation
-        function lockOrientation() {
-            if (screen.orientation && screen.orientation.lock) {
-                screen.orientation.lock('portrait-primary')
-                    .then(() => {
-                        console.log('Orientation locked to portrait-primary');
-                    })
-                    .catch(error => {
-                        console.warn('Screen orientation lock failed:', error);
-                        // This might fail if not in fullscreen or not supported,
-                        // or if the user has an OS-level orientation lock.
-                        // The manifest 'orientation' property is a stronger hint for PWAs.
-                    });
-            } else if (screen.lockOrientation) { // Older API
-                screen.lockOrientation('portrait-primary');
-            } else if (screen.mozLockOrientation) { // Firefox
-                screen.mozLockOrientation('portrait-primary');
-            } else if (screen.msLockOrientation) { // IE/Edge
-                screen.msLockOrientation('portrait-primary');
-            }
-        }
-
-        // Call lockOrientation when the app loads or becomes visible
-        window.addEventListener('load', lockOrientation);
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible') {
-                lockOrientation();
-            }
-        });
-
-
-        // Dark Mode Toggle Logic
+        // Dark Mode Toggle Logic (same as before)
         const themeToggleButton = document.getElementById('theme-toggle-button');
-        const currentTheme = localStorage.getItem('theme');
-
-        if (currentTheme === 'dark') {
-            document.body.classList.add('dark-mode');
-        } else if (currentTheme === 'light') {
-            document.body.classList.remove('dark-mode');
-        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.body.classList.add('dark-mode');
-        }
+        const applyTheme = () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        };
 
         themeToggleButton.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
-            let theme = 'light';
-            if (document.body.classList.contains('dark-mode')) {
-                theme = 'dark';
-            }
-            localStorage.setItem('theme', theme);
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
         });
 
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-            if (!localStorage.getItem('theme')) {
-                if (event.matches) {
-                    document.body.classList.add('dark-mode');
-                } else {
-                    document.body.classList.remove('dark-mode');
-                }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        applyTheme(); // Apply theme on initial load
+
+        // Attempt to lock orientation (best effort, manifest is primary)
+        // This is less critical for iOS if manifest `orientation` is set
+        function attemptLockOrientation() {
+            if (screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('portrait-primary').catch(err => {
+                    // console.warn("Could not lock orientation via JS: ", err);
+                    // Common: "The page needs to be fullscreen in order to call screen.orientation.lock()."
+                    // This is expected if not launched as standalone PWA yet.
+                });
             }
-        });
+        }
+        window.addEventListener('load', attemptLockOrientation);
 
-        // Prevent content selection (optional, but common in non-scrollable/zoomable apps)
-        // document.body.style.webkitUserSelect = 'none'; /* Safari */
-        // document.body.style.mozUserSelect = 'none';    /* Firefox */
-        // document.body.style.msUserSelect = 'none';     /* IE10+ */
-        // document.body.style.userSelect = 'none';       /* Standard */
+        // Prevent default touch behaviors that might cause scrolling or zooming
+        // document.addEventListener('touchmove', function(event) {
+        //     event.preventDefault();
+        // }, { passive: false });
 
+        // Disabling touchmove like this can be too aggressive, disabling buttons too.
+        // The viewport meta tag and CSS overflow:hidden should be the primary means.
+        // If you still see scrolling, it means content is overflowing the `body` or `html` elements.
     </script>
 </body>
 </html>
