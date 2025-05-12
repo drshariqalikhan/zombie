@@ -1,15 +1,16 @@
-const CACHE_NAME = 'barebones-pwa-cache-v1';
+const CACHE_NAME = 'locked-pwa-cache-v3'; // Changed from v2 to v3
 const urlsToCache = [
-    './', // Alias for index.html
+    './',
     './index.html',
-    // Add other assets you want to cache here, e.g., './style.css', './script.js' if they were separate
-    // './icon-192x192.png', // Cache icons if needed, though apple-touch-icon is usually fetched by iOS
-    // './icon-512x512.png'
+    './manifest.json',
+    './icon-192x192.png',
+    './icon-512x512.png'
 ];
 
-// Install event: open cache and add core files
+// ... rest of your sw.js remains the same ...
+
 self.addEventListener('install', event => {
-    console.log('[ServiceWorker] Install');
+    console.log('[ServiceWorker] Install event - Cache Version:', CACHE_NAME);
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(cache => {
@@ -17,14 +18,13 @@ self.addEventListener('install', event => {
                 return cache.addAll(urlsToCache);
             })
             .then(() => {
-                return self.skipWaiting(); // Force the waiting service worker to become the active service worker
+                return self.skipWaiting();
             })
     );
 });
 
-// Activate event: clean up old caches
 self.addEventListener('activate', event => {
-    console.log('[ServiceWorker] Activate');
+    console.log('[ServiceWorker] Activate event - Current Cache:', CACHE_NAME);
     event.waitUntil(
         caches.keys().then(cacheNames => {
             return Promise.all(
@@ -36,42 +36,25 @@ self.addEventListener('activate', event => {
                 })
             );
         }).then(() => {
-            return self.clients.claim(); // Take control of all open clients
+            return self.clients.claim();
         })
     );
 });
 
-// Fetch event: serve cached content when offline, or fetch from network
 self.addEventListener('fetch', event => {
-    // We only want to cache GET requests
     if (event.request.method !== 'GET') {
         return;
     }
-
     event.respondWith(
         caches.match(event.request)
             .then(cachedResponse => {
                 if (cachedResponse) {
-                    console.log('[ServiceWorker] Returning from cache:', event.request.url);
                     return cachedResponse;
                 }
-                console.log('[ServiceWorker] Fetching from network:', event.request.url);
-                return fetch(event.request).then(
-                    networkResponse => {
-                        // Optionally, cache new requests dynamically
-                        // if (networkResponse && networkResponse.status === 200) {
-                        //     const responseToCache = networkResponse.clone();
-                        //     caches.open(CACHE_NAME)
-                        //         .then(cache => {
-                        //             cache.put(event.request, responseToCache);
-                        //         });
-                        // }
-                        return networkResponse;
-                    }
-                ).catch(error => {
-                    console.log('[ServiceWorker] Fetch failed; returning offline fallback (if available) or error', error);
-                    // Optionally, return a generic offline page here if the fetch fails
-                    // return caches.match('./offline.html');
+                return fetch(event.request).then(networkResponse => {
+                    return networkResponse;
+                }).catch(error => {
+                    console.error('[ServiceWorker] Fetch error:', error);
                 });
             })
     );
