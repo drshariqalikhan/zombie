@@ -3,8 +3,8 @@ const urlsToCache = [
     './',
     './index.html',
     './manifest.json',
-    './icon-192x192.png',
-    './icon-512x512.png'
+    './icons/icon-192x192.png',
+    './icons/icon-512x512.png'
 ];
 
 // ... rest of your sw.js remains the same ...
