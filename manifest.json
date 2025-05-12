@@ -1,12 +1,12 @@
 {
-    "name": "My Barebones PWA (Locked)",
+    "name": "My Locked PWA",
     "short_name": "MyPWA",
-    "description": "A simple progressive web application, locked to portrait.",
+    "description": "PWA locked to portrait, no zoom, no scroll.",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#ffffff",
+    "orientation": "portrait-primary",
+    "background_color": "#121212",
     "theme_color": "#007aff",
-    "orientation": "portrait-primary", // UPDATED: Locks orientation to portrait
     "icons": [
         {
             "src": "icon-192x192.png",
