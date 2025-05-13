@@ -2,235 +2,532 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
-    <title>Portrait Only PWA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#0D1A2E">
+
+    <!-- iOS PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="PortraitApp">
+    <meta name="apple-mobile-web-app-title" content="FinApp">
 
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="./icons/icon-192x192.png">
+    <!-- Apple Touch Icons (replace with your actual icon paths/sizes) -->
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <!-- Add more sizes as needed: 180x180 for iPhone X, etc. -->
+
+    <title>FinApp</title>
 
     <style>
-        /* Basic Reset & Global Styles */
+        /* Reset and Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
         }
 
-        :root {
-            --background-color-light: #f0f0f0;
-            --text-color-light: #333333;
-            --background-color-dark: #1e1e1e; /* Slightly different dark for splash */
-            --text-color-dark: #e0e0e0;
-            --accent-color: #007aff;
-        }
-
-        html, body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            overscroll-behavior: none;
-            position: fixed;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-                Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0D1A2E; /* Dark blue background */
+            color: #FFFFFF;
             line-height: 1.6;
+            padding-bottom: 20px; /* Space for potential bottom nav or home indicator */
         }
 
-        /* Splash Screen Styles */
-        #splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000000; /* Black background */
-            color: #ffffff;
-            display: flex; /* Used to center content */
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            z-index: 9999; /* Ensure it's on top */
-            padding: 20px;
-            padding-top: env(safe-area-inset-top);
-            padding-left: env(safe-area-inset-left);
-            padding-right: env(safe-area-inset-right);
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-
-        #splash-screen p {
-            font-size: 1.2em;
-        }
-
-        /* Main App Content Container - Initially hidden */
-        #app-main-content {
-            display: none; /* Hidden by default */
-            width: 100%;
-            height: 100%;
-            background-color: var(--background-color-light); /* Body background for the app */
-            color: var(--text-color-light);
-            transition: background-color 0.3s ease, color 0.3s ease;
-
-            /* Flexbox to center actual app UI if needed */
-            /* These styles are similar to what was on `body` before for centering */
+        /* Header */
+        .app-header {
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            background-color: #0D1A2E; /* Same as body or slightly different if needed */
+        }
+
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #A08CDA; /* Light purple avatar */
+            border-radius: 50%;
+            display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            padding-top: env(safe-area-inset-top);
-            padding-left: env(safe-area-inset-left);
-            padding-right: env(safe-area-inset-right);
-            padding-bottom: env(safe-area-inset-bottom);
+            overflow: hidden; /* For potential image inside */
+        }
+        .profile-avatar svg {
+            width: 28px;
+            height: 28px;
+            fill: #4A2E6F; /* Darker purple for inner shape */
         }
 
-        #app-main-content.dark-mode {
-            background-color: var(--background-color-dark);
-            color: var(--text-color-dark);
+
+        .new-deals-chip {
+            background-color: #6A40D9; /* Purple chip */
+            color: #FFFFFF;
+            font-size: 0.8em;
+            font-weight: bold;
+            padding: 5px 12px;
+            border-radius: 15px;
+            margin-left: -20px; /* Adjust to position relative to avatar */
         }
 
-        /* Specific UI elements within the app */
-        .app-ui-wrapper { /* Renamed from <app-content> for clarity */
-            display: block;
-            width: 90%;
-            max-width: 600px;
+        .header-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-actions svg {
+            width: 24px;
+            height: 24px;
+            fill: #FFFFFF;
+            margin-left: 20px;
+            cursor: pointer;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            padding: 0 20px;
+        }
+
+        /* Credit Card Section */
+        .credit-card-section {
+            background-color: #E6DCF2; /* Light lavender */
+            color: #1E1E1E; /* Dark text for contrast */
             padding: 20px;
+            border-radius: 12px;
+            margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        h1 {
-            font-size: 1.8em;
-            margin-bottom: 15px;
-            color: var(--accent-color);
+        .credit-card-section h2 {
+            font-size: 1em;
+            font-weight: normal;
+            margin-bottom: 5px;
+            color: #333;
         }
 
-        p { /* General paragraph styling */
+        .card-balance {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #000;
+        }
+
+        .card-available {
+            font-size: 0.9em;
+            color: #555;
             margin-bottom: 20px;
         }
 
-        button {
-            padding: 12px 25px;
-            font-size: 1em;
-            cursor: pointer;
-            background-color: var(--accent-color);
-            color: white;
+        .spend-insights-btn {
+            background-color: #FFFFFF;
+            color: #1E1E1E;
             border: none;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            float: right; /* Aligns button to the right */
+        }
+        .credit-card-section::after { /* Clearfix for floated button */
+            content: "";
+            clear: both;
+            display: table;
         }
 
-        button:hover {
-            opacity: 0.8;
+
+        /* Dividend Target Section */
+        .dividend-target-section {
+            background-color: #004A77; /* Medium blue */
+            color: #FFFFFF;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
+
+        .dividend-target-section h3 {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .dividend-target-section p {
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            color: #E0E0E0;
+        }
+
+        .pagination-dots {
+            display: flex;
+        }
+
+        .pagination-dots span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+            margin-right: 6px;
+        }
+
+        .pagination-dots span.active {
+            background-color: #FFFFFF;
+        }
+        .pagination-dots span.long {
+            width: 16px; /* Make one dot longer */
+            border-radius: 4px;
+        }
+
+
+        /* Action Buttons Section */
+        .action-buttons-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start; /* Align items to the top for text wrapping */
+            padding: 25px 0;
+            text-align: center;
+        }
+
+        .action-button {
+            background: none;
+            border: none;
+            color: #FFFFFF;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 70px; /* Fixed width for better spacing */
+        }
+
+        .action-button .icon-container {
+            width: 48px;
+            height: 48px;
+            background-color: #004A77; /* Same as dividend, or slightly different blue */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .action-button svg {
+            width: 24px;
+            height: 24px;
+            fill: #FFFFFF;
+        }
+
+        .action-button span {
+            font-size: 0.8em;
+        }
+
+        /* Activity Section */
+        .activity-section {
+            margin-top: 10px;
+        }
+
+        .activity-section h2 {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .activity-list {
+            list-style: none;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #1A2C47; /* Slightly lighter dark blue */
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .activity-item-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px; /* Square-ish with rounded corners */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+        .activity-item-icon.cashback-icon {
+            background-color: #28A745; /* Green */
+        }
+        .activity-item-icon.webinar-icon {
+            background-color: #FFA500; /* Orange for webinar type */
+        }
+
+        .activity-item-icon svg {
+            width: 22px;
+            height: 22px;
+            fill: #FFFFFF;
+        }
+
+        .activity-details {
+            flex-grow: 1;
+        }
+
+        .activity-title {
+            font-size: 1em;
+            font-weight: 500;
+        }
+
+        .activity-date {
+            font-size: 0.8em;
+            color: #A0A0A0;
+        }
+
+        .activity-amount {
+            font-size: 1em;
+            font-weight: 500;
+        }
+
+        .activity-amount.positive {
+            color: #28A745; /* Green */
+        }
+        .activity-amount.neutral {
+            color: #FFA500; /* Orange for info */
+        }
+
+
+        /* Free Investment Webinar Banner */
+        .investment-webinar-banner {
+            background-color: #FFFFFF;
+            color: #1E1E1E;
+            padding: 12px 20px;
+            border-radius: 25px; /* Pill shape */
+            text-align: center;
+            font-size: 0.9em;
+            font-weight: 500;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            cursor: pointer;
+        }
+        .investment-webinar-banner .emoji {
+            margin-left: 5px;
+        }
+
     </style>
 </head>
 <body>
 
-    <!-- Splash Screen -->
-    <!-- <div id="splash-screen">
-        <p>Please rotate your phone to portrait mode to use this vscode edited app.</p>
-    </div> -->
-
-    <!-- Main Application Content (initially hidden) -->
-    <main id="app-main-content">
-        <div class="app-ui-wrapper">
-            <h1>Welcome to the App!</h1>
-            <p>Content is now visible in portrait mode.</p>
-            <button id="theme-toggle-button">Toggle Dark Mode</button>
+    <header class="app-header">
+        <div class="profile-avatar">
+            <!-- Simple abstract SVG for avatar -->
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="35" r="15"/>
+                <path d="M25,85 Q50,60 75,85 Q50,95 25,85 Z"/>
+            </svg>
         </div>
+        <span class="new-deals-chip">NEW DEALS</span>
+        <div class="header-actions">
+            <!-- Eye Icon SVG -->
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+            <!-- User Icon SVG -->
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section class="credit-card-section">
+            <h2>Credit card</h2>
+            <div class="card-balance">321.96</div>
+            <div class="card-available">149,678.04 available</div>
+            <button class="spend-insights-btn">Spend insights</button>
+        </section>
+
+        <section class="dividend-target-section">
+            <h3>6.50% p.a. dividend target</h3>
+            <p>Get monthly dividends with Income+</p>
+            <div class="pagination-dots">
+                <span></span>
+                <span class="active long"></span>
+                <span></span>
+            </div>
+        </section>
+
+        <nav class="action-buttons-nav">
+            <button class="action-button">
+                <div class="icon-container">
+                    <!-- Card Icon SVG -->
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4V8h16v10zm0-12H4V6h16v2z"/></svg>
+                </div>
+                <span>View card</span>
+            </button>
+            <button class="action-button">
+                <div class="icon-container">
+                    <!-- Gift Icon SVG -->
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3S12 3.34 12 5c0 .35.07.69.18 1H10c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V12c0-1.1-.9-2-2-2h-4V8c0-1.1-.9-2-2-2zm-8-1c0-.55.45-1 1-1s1 .45 1 1H4v2h4V8h4v2h4v2h4V8h-4V6zM4 12h16v8H4v-8z"/><path d="M12 14c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                </div>
+                <span>Rewards</span>
+            </button>
+            <button class="action-button">
+                <div class="icon-container">
+                    <!-- Arrows Icon SVG -->
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/></svg>
+                </div>
+                <span>Payments</span>
+            </button>
+            <button class="action-button">
+                <div class="icon-container">
+                    <!-- Apply/Add Icon (simplified) -->
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 14h-3v3h-2v-3H8v-2h3v-3h2v3h3v2zm-3-7V3.5L18.5 9H13z"/></svg>
+                </div>
+                <span>Apply</span>
+            </button>
+        </nav>
+
+        <section class="activity-section">
+            <h2>Activity</h2>
+            <ul class="activity-list">
+                <li class="activity-item">
+                    <div class="activity-item-icon cashback-icon">
+                        <!-- Dollar/Refresh for Cashback SVG -->
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26zM11 11H9v2H8v-2H6v-1h2V8h1v2h2v1z"/></svg>
+                    </div>
+                    <div class="activity-details">
+                        <div class="activity-title">Cashback</div>
+                        <div class="activity-date">Mon, 12 May 2025</div>
+                    </div>
+                    <div class="activity-amount positive">+0.31</div>
+                </li>
+                <!-- You can add more activity items here -->
+            </ul>
+        </section>
+
+        <div class="investment-webinar-banner">
+            Free investment webinar <span class="emoji">👇</span>
+        </div>
+
     </main>
 
     <script>
-        const splashScreen = document.getElementById('splash-screen');
-        const mainAppContent = document.getElementById('app-main-content');
-        const themeToggleButton = document.getElementById('theme-toggle-button');
-
-        function isPortrait() {
-            // screen.orientation.type is the most reliable
-            if (screen.orientation && screen.orientation.type) {
-                return screen.orientation.type.includes('portrait');
-            }
-            // Fallback for older browsers/devices (less reliable)
-            return window.innerHeight > window.innerWidth;
-        }
-
-        function handleOrientationChange() {
-            console.log("Handling orientation change. Current type:", screen.orientation ? screen.orientation.type : "N/A");
-            if (isPortrait()) {
-                splashScreen.style.display = 'none';
-                mainAppContent.style.display = 'flex'; // Show main content (use 'flex' due to its centering styles)
-                console.log("Portrait: Showing app content.");
-            } else {
-                splashScreen.style.display = 'flex'; // Show splash (use 'flex' due to its centering styles)
-                mainAppContent.style.display = 'none';
-                console.log("Landscape: Showing splash screen.");
-            }
-        }
-
-        // Initial check on load
-        window.addEventListener('load', () => {
-            // Apply initial theme for the main app content (even if hidden)
-            applyTheme();
-
-            // A small delay can help ensure screen.orientation is correctly reported on load
-            setTimeout(handleOrientationChange, 150);
-        });
-
-        // Listen for orientation changes
-        if (screen.orientation) {
-            screen.orientation.addEventListener('change', () => {
-                 // Delay helps ensure properties like screen.orientation.type are fully updated
-                setTimeout(handleOrientationChange, 150);
-            });
-        } else {
-            // Fallback for older browsers
-            window.addEventListener('orientationchange', () => {
-                setTimeout(handleOrientationChange, 150);
-            });
-        }
-
-        // Dark Mode Toggle Logic (applies to #app-main-content)
-        const applyTheme = () => {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                mainAppContent.classList.add('dark-mode');
-            } else {
-                mainAppContent.classList.remove('dark-mode');
-            }
-        };
-
-        themeToggleButton.addEventListener('click', () => {
-            mainAppContent.classList.toggle('dark-mode');
-            localStorage.setItem('theme', mainAppContent.classList.contains('dark-mode') ? 'dark' : 'light');
-        });
-
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-            // Only change if no theme is manually set in localStorage
-            if (!localStorage.getItem('theme')) {
-                applyTheme();
-            }
-        });
-
         // Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw-workbox.js')
+                navigator.serviceWorker.register('sw.js') // Path to your service worker file
                     .then(registration => {
-                        console.log('Workbox ServiceWorker: Registration successful with scope: ', registration.scope);
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
                     })
                     .catch(error => {
-                        console.error('Workbox ServiceWorker: Registration failed: ', error);
+                        console.log('ServiceWorker registration failed: ', error);
                     });
             });
         }
+
+        // You would typically have manifest.json and sw.js as separate files.
+        // For this single-file request, their content is conceptually here:
+
+        /*
+        // manifest.json (SAVE AS A SEPARATE FILE and link in <head>)
+        {
+            "name": "FinApp PWA",
+            "short_name": "FinApp",
+            "description": "A financial application PWA example.",
+            "start_url": ".",
+            "display": "standalone",
+            "background_color": "#0D1A2E",
+            "theme_color": "#0D1A2E",
+            "icons": [
+                {
+                    "src": "icons/icon-192x192.png", // Provide your own icon
+                    "sizes": "192x192",
+                    "type": "image/png"
+                },
+                {
+                    "src": "icons/icon-512x512.png", // Provide your own icon
+                    "sizes": "512x512",
+                    "type": "image/png"
+                },
+                {
+                    "src": "icons/icon-maskable-192x192.png", // Maskable icon
+                    "sizes": "192x192",
+                    "type": "image/png",
+                    "purpose": "maskable"
+                }
+            ]
+        }
+        */
+
+        /*
+        // sw.js (Service Worker - SAVE AS A SEPARATE FILE and register above)
+        const CACHE_NAME = 'finapp-cache-v1';
+        const urlsToCache = [
+            '/', // Or your specific start_url like 'index.html'
+            // Add other critical assets like CSS, JS, main images if they were separate
+            // 'styles.css',
+            // 'app.js',
+            // 'images/logo.png'
+        ];
+
+        self.addEventListener('install', event => {
+            event.waitUntil(
+                caches.open(CACHE_NAME)
+                    .then(cache => {
+                        console.log('Opened cache');
+                        return cache.addAll(urlsToCache);
+                    })
+            );
+        });
+
+        self.addEventListener('fetch', event => {
+            event.respondWith(
+                caches.match(event.request)
+                    .then(response => {
+                        // Cache hit - return response
+                        if (response) {
+                            return response;
+                        }
+                        return fetch(event.request).then(
+                            // Check if we received a valid response
+                            // Important for non-GET requests or opaque responses
+                            (response) => {
+                                if(!response || response.status !== 200 || response.type !== 'basic') {
+                                    return response;
+                                }
+
+                                // IMPORTANT: Clone the response. A response is a stream
+                                // and because we want the browser to consume the response
+                                // as well as the cache consuming the response, we need
+                                // to clone it so we have two streams.
+                                var responseToCache = response.clone();
+
+                                caches.open(CACHE_NAME)
+                                    .then((cache) => {
+                                        cache.put(event.request, responseToCache);
+                                    });
+
+                                return response;
+                            }
+                        );
+                    })
+            );
+        });
+
+        self.addEventListener('activate', event => {
+            const cacheWhitelist = [CACHE_NAME];
+            event.waitUntil(
+                caches.keys().then(cacheNames => {
+                    return Promise.all(
+                        cacheNames.map(cacheName => {
+                            if (cacheWhitelist.indexOf(cacheName) === -1) {
+                                return caches.delete(cacheName);
+                            }
+                        })
+                    );
+                })
+            );
+        });
+        */
     </script>
+
 </body>
 </html>
